@@ -1,145 +1,243 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>Anwesha Gartia | Portfolio</title>
-
-<link rel="stylesheet" href="style.css">
-
-</head>
-
-<body>
-
-<nav>
-
-<h2 class="logo">Anwesha</h2>
-
-<ul>
-
-<li><a href="#about">About</a></li>
-<li><a href="#skills">Skills</a></li>
-<li><a href="#projects">Projects</a></li>
-<li><a href="#contact">Contact</a></li>
-
-</ul>
-<button id="modeToggle">🌙</button>
-</nav>
-<div class="background"></div>
-
-<header>
-
-<div class="hero">
-
-<img src="profile.jpg" class="profile">
-
-<h1>Hello, I'm <span>Anwesha Gartia</span></h1>
-
-<h3 class="typing"></h3>
-
-<a href="resume.pdf" class="btn">Download Resume</a>
-
-</div>
-
-</header>
-
-
-<section id="about">
-
-<h2>About Me</h2>
-
-<p>
-
-Computer Science student passionate about Artificial Intelligence, Machine Learning, and Data Science.
-
-Interested in solving computational problems and building impactful tech solutions.
-
-</p>
-
-</section>
-
-
-<section id="skills">
-
-<h2>Skills</h2>
-
-<div class="skills">
-
-<div class="skill">Python</div>
-
-<div class="skill">Java</div>
-
-<div class="skill">Data Structures</div>
-
-<div class="skill">Machine Learning</div>
-
-<div class="skill">HTML</div>
-
-<div class="skill">CSS</div>
-
-</div>
-
-</section>
-
-
-<section id="projects">
-
-<h2>Projects</h2>
-<div id="github-projects"></div>
-<div class="projects">
-
-<div class="project">
-
-<h3>AI Benchmark Research</h3>
-
-<p>Study on benchmark saturation and illusion of AI progress.</p>
-
-</div>
-
-<div class="project">
-
-<h3>Python Interpreter Design</h3>
-
-<p>Explaining architecture and execution flow of Python interpreter.</p>
-
-</div>
-
-<div class="project">
-
-<h3>Statistical Visualization Tool</h3>
-
-<p>Python project for probability simulations and statistical analysis.</p>
-
-</div>
-
-</div>
-
-</section>
-
-
-<section id="contact">
-
-<h2>Contact</h2>
-
-<p>Email: your-email@gmail.com</p>
-
-<p>GitHub: https://github.com/yourusername</p>
-
-<p>LinkedIn: https://linkedin.com/in/yourprofile</p>
-
-</section>
-
-
-<footer>
-
-<p>© 2026 Anwesha Gartia</p>
-
-</footer>
-
-<script src="script.js"></script>
-
-</body>
-
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Portfolio of Anwesha Gartia - building modern, high-performance web experiences."
+    />
+    <title>Anwesha Gartia | Portfolio</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&family=Playfair+Display:wght@600;700&family=Sora:wght@500;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="page-noise" aria-hidden="true"></div>
+    <div class="gradient-blob blob-a" aria-hidden="true"></div>
+    <div class="gradient-blob blob-b" aria-hidden="true"></div>
+
+    <header class="header" id="top">
+      <a class="logo" href="#top">AG</a>
+      <nav class="nav">
+        <a href="#about">About</a>
+        <a href="#skills">Skills</a>
+        <a href="#projects">Projects</a>
+        <a href="#contact">Contact</a>
+      </nav>
+      <a class="btn btn-small" href="assets/Anwesha_Resume.pdf" target="_blank" rel="noreferrer">Resume</a>
+    </header>
+
+    <main>
+      <section class="hero" id="home">
+        <div class="hero-left">
+          <p class="badge reveal">Open to opportunities</p>
+          <h1 class="title reveal delay-1">
+            Anwesha Gartia
+            <span>Frontend Developer</span>
+          </h1>
+          <p class="hero-text reveal delay-2">
+            I design and develop clean, conversion-focused websites with smooth interactions,
+            accessible architecture, and modern visual systems.
+          </p>
+          <div class="hero-cta reveal delay-3">
+            <a class="btn" href="#projects">View Projects</a>
+            <a class="btn btn-outline" href="mailto:anweshagartia13@gmail.com">Email Me</a>
+          </div>
+          <div class="quick-contact reveal delay-4">
+            <a href="mailto:anweshagartia13@gmail.com">anweshagartia13@gmail.com</a>
+            <a href="tel:+917008976034">+91 7008976034</a>
+          </div>
+          <div class="social-links reveal delay-4">
+            <a href="https://github.com/anweshagartia13" target="_blank" rel="noreferrer">GitHub</a>
+            <a
+              href="https://www.linkedin.com/in/anwesha-gartia-652530303?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app"
+              target="_blank"
+              rel="noreferrer"
+              >LinkedIn</a
+            >
+          </div>
+        </div>
+
+        <aside class="hero-card reveal delay-2">
+          <figure class="profile-frame">
+            <img src="assets/profile.jpg" alt="Portrait of Anwesha Gartia" />
+          </figure>
+          <svg viewBox="0 0 500 280" class="hero-graphic" aria-hidden="true">
+            <defs>
+              <linearGradient id="lineGradient" x1="0" x2="1" y1="0" y2="1">
+                <stop offset="0%" stop-color="#f97316" />
+                <stop offset="100%" stop-color="#06b6d4" />
+              </linearGradient>
+            </defs>
+            <rect x="20" y="30" width="460" height="220" rx="20" fill="rgba(255,255,255,0.7)" />
+            <path
+              d="M50 200 C120 150, 170 210, 230 150 C280 100, 340 130, 430 70"
+              fill="none"
+              stroke="url(#lineGradient)"
+              stroke-width="10"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+            <circle cx="430" cy="70" r="11" fill="#06b6d4" />
+            <circle cx="230" cy="150" r="11" fill="#f97316" />
+          </svg>
+          <div class="metric-grid">
+            <article>
+              <h3 class="counter" data-target="12">0</h3>
+              <p>Projects Completed</p>
+            </article>
+            <article>
+              <h3 class="counter" data-target="8">0</h3>
+              <p>Happy Clients</p>
+            </article>
+            <article>
+              <h3 class="counter" data-target="2">0</h3>
+              <p>Years Experience</p>
+            </article>
+          </div>
+        </aside>
+      </section>
+
+      <section class="section" id="about">
+        <div class="section-head">
+          <p class="kicker">About</p>
+          <h2>Professional, detail-driven, and user-focused</h2>
+        </div>
+        <p class="about-text reveal">
+          I build interfaces that are visually polished and technically reliable. My workflow blends thoughtful UI design,
+          responsive implementation, performance optimization, and clean code structure to create products that scale.
+        </p>
+      </section>
+
+      <section class="section" id="skills">
+        <div class="section-head">
+          <p class="kicker">Skills</p>
+          <h2>Tech Stack</h2>
+        </div>
+
+        <div class="skill-list">
+          <article class="skill-item reveal">
+            <div>
+              <h3>HTML / CSS</h3>
+              <p>Semantic structure, responsive layouts, visual polish.</p>
+            </div>
+            <div class="bar"><span style="--w: 95%"></span></div>
+          </article>
+
+          <article class="skill-item reveal delay-1">
+            <div>
+              <h3>JavaScript</h3>
+              <p>Interactive UI, dynamic components, and clean logic.</p>
+            </div>
+            <div class="bar"><span style="--w: 88%"></span></div>
+          </article>
+
+          <article class="skill-item reveal delay-2">
+            <div>
+              <h3>React</h3>
+              <p>Reusable components and scalable frontend architecture.</p>
+            </div>
+            <div class="bar"><span style="--w: 84%"></span></div>
+          </article>
+
+          <article class="skill-item reveal delay-3">
+            <div>
+              <h3>UI/UX Design</h3>
+              <p>Hierarchy, typography, and user-centered design decisions.</p>
+            </div>
+            <div class="bar"><span style="--w: 82%"></span></div>
+          </article>
+        </div>
+      </section>
+
+      <section class="section" id="projects">
+        <div class="section-head">
+          <p class="kicker">Projects</p>
+          <h2>Selected Work</h2>
+        </div>
+
+        <div class="project-grid">
+          <article class="project-card reveal">
+            <p class="project-type">Web Application</p>
+            <h3>Sales Insights Dashboard</h3>
+            <p>
+              Realtime performance dashboard with KPI visualization, filtering, and role-aware views.
+            </p>
+            <ul>
+              <li>React</li>
+              <li>Chart.js</li>
+              <li>Node.js</li>
+            </ul>
+            <a href="#">View Project</a>
+          </article>
+
+          <article class="project-card reveal delay-1">
+            <p class="project-type">Business Website</p>
+            <h3>Creative Agency Landing Page</h3>
+            <p>
+              High-converting marketing page with animated sections, case highlights, and contact flow.
+            </p>
+            <ul>
+              <li>HTML</li>
+              <li>CSS</li>
+              <li>JavaScript</li>
+            </ul>
+            <a href="#">View Project</a>
+          </article>
+
+          <article class="project-card reveal delay-2">
+            <p class="project-type">Portfolio Platform</p>
+            <h3>Personal Brand Website</h3>
+            <p>
+              Professional portfolio with modular sections, smooth navigation, and content-first design.
+            </p>
+            <ul>
+              <li>Figma</li>
+              <li>Webflow</li>
+              <li>SEO</li>
+            </ul>
+            <a href="#">View Project</a>
+          </article>
+        </div>
+      </section>
+
+      <section class="section contact" id="contact">
+        <div class="section-head">
+          <p class="kicker">Contact</p>
+          <h2>Lets Build Something Great</h2>
+        </div>
+
+        <div class="contact-card reveal">
+          <p>Feel free to reach out for freelance work, collaborations, or full-time opportunities.</p>
+          <div class="contact-links">
+            <a href="mailto:anweshagartia13@gmail.com">anweshagartia13@gmail.com</a>
+            <a href="tel:+917008976034">+91 7008976034</a>
+            <a href="https://github.com/anweshagartia13" target="_blank" rel="noreferrer">GitHub</a>
+            <a
+              href="https://www.linkedin.com/in/anwesha-gartia-652530303?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app"
+              target="_blank"
+              rel="noreferrer"
+              >LinkedIn</a
+            >
+            <a href="assets/Anwesha_Resume.pdf" target="_blank" rel="noreferrer">Download Resume</a>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <p><span id="year"></span> Anwesha Gartia. All rights reserved.</p>
+      <a href="#top">Back to top</a>
+    </footer>
+
+    <script src="script.js"></script>
+  </body>
 </html>
+
