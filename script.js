@@ -1,58 +1,50 @@
-const text = [
-"Computer Science Student",
-"AI Enthusiast",
-"Web Developer"
-];
-
-let count = 0;
-let index = 0;
-let currentText = "";
-let letter = "";
-
-(function type(){
-
-if(count === text.length){
-count = 0;
+const yearEl = document.getElementById("year");
+if (yearEl) {
+  yearEl.textContent = new Date().getFullYear();
 }
 
-currentText = text[count];
-letter = currentText.slice(0, ++index);
+const revealObserver = new IntersectionObserver(
+  (entries, obs) => {
+    entries.forEach((entry) => {
+      if (!entry.isIntersecting) return;
+      entry.target.classList.add("visible");
+      obs.unobserve(entry.target);
+    });
+  },
+  { threshold: 0.16 }
+);
 
-document.querySelector(".typing").textContent = letter;
+document.querySelectorAll(".reveal").forEach((el) => revealObserver.observe(el));
 
-if(letter.length === currentText.length){
-count++;
-index = 0;
-}
+const counters = document.querySelectorAll(".counter");
+const animateCounter = (node) => {
+  const target = Number(node.dataset.target || 0);
+  const duration = 1200;
+  const start = performance.now();
 
-setTimeout(type,100);
+  const tick = (now) => {
+    const progress = Math.min((now - start) / duration, 1);
+    const value = Math.floor(progress * target);
+    node.textContent = `${value}+`;
+    if (progress < 1) {
+      requestAnimationFrame(tick);
+    } else {
+      node.textContent = `${target}+`;
+    }
+  };
 
-const toggle = document.getElementById("modeToggle");
+  requestAnimationFrame(tick);
+};
 
-toggle.onclick = function(){
-document.body.classList.toggle("light-mode");
+const counterObserver = new IntersectionObserver(
+  (entries, obs) => {
+    entries.forEach((entry) => {
+      if (!entry.isIntersecting) return;
+      animateCounter(entry.target);
+      obs.unobserve(entry.target);
+    });
+  },
+  { threshold: 0.5 }
+);
 
-})();
-fetch("https://api.github.com/users/yourusername/repos")
-.then(response => response.json())
-.then(data => {
-
-const container = document.getElementById("github-projects");
-
-data.slice(0,6).forEach(repo => {
-
-const project = document.createElement("div");
-
-project.className = "project";
-
-project.innerHTML = `
-<h3>${repo.name}</h3>
-<p>${repo.description || "No description available"}</p>
-<a href="${repo.html_url}" target="_blank">View Project</a>
-`;
-
-container.appendChild(project);
-
-});
-
-});
+counters.forEach((counter) => counterObserver.observe(counter));
