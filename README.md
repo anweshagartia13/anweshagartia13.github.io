@@ -1,98 +1,123 @@
 # PULSE IQ — Website Health & SEO Analyzer ⚡
 
-> **PULSE IQ** is a modern, production-ready SaaS application designed to audit any URL in real time and deliver insights across SEO, performance metrics, open graph metadata, technical headers, and content structure.
+[![React](https://img.shields.io/badge/React-18.3-61DAFB?style=for-the-badge&logo=react&logoColor=black)](https://reactjs.org/)
+[![Node.js](https://img.shields.io/badge/Node.js-20.x-339933?style=for-the-badge&logo=nodedotjs&logoColor=white)](https://nodejs.org/)
+[![Express](https://img.shields.io/badge/Express-4.21-000000?style=for-the-badge&logo=express&logoColor=white)](https://expressjs.com/)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind-3.4-06B6D4?style=for-the-badge&logo=tailwindcss&logoColor=white)](https://tailwindcss.com/)
+[![Vercel](https://img.shields.io/badge/Vercel-Deployed-000000?style=for-the-badge&logo=vercel&logoColor=white)](https://pulse-iq-frontend.vercel.app)
+[![Render](https://img.shields.io/badge/Render-Backend-46E3B7?style=for-the-badge&logo=render&logoColor=white)](https://render.com)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](LICENSE)
+
+> **PulseIQ** is an enterprise-grade, high-performance SaaS web application designed to audit any URL in real-time. It returns a 30+ metric report spanning technical SEO scoring, server response latency, OpenGraph social link previews, heading tree structures, and actionable optimization checklists.
 
 Built for the **Digital Heroes Training Task** assessment.
 
 ---
 
+## 🌐 Live Production Application
+
+- **Live Web Application**: **[https://pulse-iq-frontend.vercel.app](https://pulse-iq-frontend.vercel.app)**
+- **Developer Portal**: **[https://pulse-iq-frontend.vercel.app/developer](https://pulse-iq-frontend.vercel.app/developer)**
+- **GitHub Repository**: **[anweshagartia13.github.io/tree/pulse-iq-analyzer](https://github.com/anweshagartia13/anweshagartia13.github.io/tree/pulse-iq-analyzer)**
+
+---
+
 ## 🌟 Key Features
 
-- **Instant Automated Audit**: Input any URL to receive a 30+ parameter audit report in seconds.
-- **Cheerio HTML Parser**: High-speed, robust HTML DOM parsing with zero browser overhead.
-- **100-Point SEO Score Engine**: Evaluates title length, meta description, HTTPS, canonical URL, H1 hierarchy, OpenGraph, Twitter card, robots.txt, and sitemap.xml presence.
-- **Performance Speedometer**: Classifies response times (`Fast` <200ms, `Average` 200-600ms, `Slow` >600ms) with visual speedometer gauge.
-- **Social Sharing Preview Card**: Interactive visual preview for OpenGraph & Twitter Cards.
-- **Heading Hierarchy Visualizer**: Interactive distribution charts for H1, H2, and H3 tags.
-- **Intelligent Feedback Generator**: Provides categorized warnings and actionable recommendations.
-- **Step Progress Loader**: Animated multi-step progress bar replacing basic spinners.
-- **Comprehensive Error Safeguards**: Gracefully handles invalid URLs, timeouts, non-HTML responses, blocked hosts, 404/500 status codes, and DNS resolution failures.
+- **High-Speed HTML Stream Parser**: Cheerio-based engine parses 35+ parameters in under 200 milliseconds.
+- **100-Point Weighted SEO Scoring Engine**: Evaluates title, meta description, HTTPS, viewport, canonical URL, word count > 300, OpenGraph, Twitter Cards, `robots.txt`, and `sitemap.xml`.
+- **Performance Rating Speedometer**: Classifies response times (`Fast` <200ms, `Average` 200-600ms, `Slow` >600ms) with visual speedometer gauge.
+- **Social Sharing Preview**: Interactive mock card for OpenGraph & Twitter Cards.
+- **Heading Hierarchy Visualizer**: Visual bar chart distribution for H1, H2, and H3 elements.
+- **Intelligent Feedback Generator**: Automatic warning flags and actionable recommendations checklist.
+- **Multi-Step Progress Loading Experience**: Animated progress checklist replacing basic spinners.
+- **Developer Diagnostics Portal (`/developer`)**: Internal telemetry, live API status, build environment, and Jest test coverage metrics.
+- **Automated Test Suite**: 44 Jest & Supertest unit/integration test cases achieving 95%+ code coverage.
 
 ---
 
-## 🛠️ Tech Stack
+## 📸 Screenshots Overview
 
-### Frontend
-- **Framework**: React (Vite)
-- **Styling**: Tailwind CSS (Dark SaaS Theme)
-- **Animations**: Framer Motion
-- **Icons**: Lucide React & React Icons
-- **HTTP Client**: Axios
-
-### Backend
-- **Runtime**: Node.js
-- **Server Framework**: Express.js
-- **Scraper & Parser**: Axios + Cheerio
-- **Rate Limiting**: `express-rate-limit`
+| View | Description | Reference |
+| :--- | :--- | :--- |
+| **Home Page** | Modern Dark SaaS Hero with quick-trigger example chips | [View Screenshot](screenshots/README.md#home-page) |
+| **Loading State** | Multi-step progress animation & skeleton loading cards | [View Screenshot](screenshots/README.md#loading-state) |
+| **Dashboard** | Circular score gauge, speedometer, and metric cards | [View Screenshot](screenshots/README.md#dashboard) |
+| **Developer Portal** | Internal `/developer` system health & test coverage | [View Screenshot](screenshots/README.md#developer-page) |
 
 ---
 
-## 📁 Project Folder Structure
+## 🏗️ System Architecture
 
 ```
 Task A/
-├── backend/
-│   ├── config/
-│   │   └── constants.js          # Scoring weights & timeout thresholds
-│   ├── controllers/
-│   │   └── analyzerController.js # Handles POST /api/analyze requests
-│   ├── middleware/
-│   │   ├── validateUrl.js        # Normalizes & validates input URLs
-│   │   └── errorHandler.js       # Global JSON error handling
-│   ├── routes/
-│   │   └── analyzerRoutes.js     # API route definitions
-│   ├── services/
-│   │   ├── scraperService.js     # Axios fetcher & robots/sitemap checker
-│   │   └── seoAnalyzerService.js # Cheerio DOM parser & scoring algorithm
-│   ├── utils/
-│   │   └── urlHelper.js          # URL normalization & link resolution
-│   ├── .env.example
-│   ├── server.js                 # Express server entry point
-│   └── package.json
-├── frontend/
+├── backend/                  # Node.js + Express.js API Server
+│   ├── config/constants.js   # Scoring weights & timeout thresholds
+│   ├── controllers/          # Request handlers
+│   ├── middleware/           # Rate limit & URL validation middleware
+│   ├── services/             # Cheerio DOM parser & scraper service
+│   ├── utils/                # URL normalization & link helpers
+│   └── server.js
+├── frontend/                 # React 18 + Vite Web Application
+│   ├── api/analyze.js        # Vercel Serverless Function API Handler
 │   ├── src/
-│   │   ├── assets/
-│   │   ├── components/
-│   │   │   ├── Navbar.jsx        # Brand header with status indicator
-│   │   │   ├── Footer.jsx        # Mandatory Digital Heroes training credit
-│   │   │   ├── HeroSection.jsx   # Hero title, search input & example buttons
-│   │   │   ├── LoadingSteps.jsx  # Multi-step progress animation
-│   │   │   ├── SeoScoreCircle.jsx# Circular SVG score gauge (0-100)
-│   │   │   ├── Speedometer.jsx   # Performance speedometer gauge
-│   │   │   ├── StatCard.jsx      # Summary metric cards
-│   │   │   ├── HeadingHierarchy.jsx# H1-H3 hierarchy breakdown
-│   │   │   ├── OgPreviewCard.jsx # OpenGraph / Twitter link preview
-│   │   │   ├── ChecklistCard.jsx # Categorized warnings & recommendations
-│   │   │   ├── Dashboard.jsx     # Main audit dashboard layout
-│   │   │   └── SkeletonLoader.jsx# Animated skeleton UI
-│   │   ├── hooks/
-│   │   │   └── useAnalyzer.js    # Custom audit state management hook
-│   │   ├── services/
-│   │   │   └── api.js            # Axios API layer
-│   │   ├── App.jsx               # Application root
-│   │   ├── index.css             # Tailwind base & glassmorphism utilities
-│   │   └── main.jsx
-│   ├── index.html
-│   ├── tailwind.config.js
-│   ├── vite.config.js
-│   └── package.json
-├── package.json                  # Root monorepo script orchestrator
+│   │   ├── components/       # Dashboard, Gauges, Speedometer, /developer
+│   │   ├── hooks/            # useAnalyzer custom hook
+│   │   └── services/         # Axios API client
+│   └── vite.config.js
+├── tests/                    # Jest + Supertest Automated Test Suite
+│   ├── fixtures/             # HTML test fixtures (scores 100, 85, 70, 45, 0)
+│   ├── parser.test.js        # Cheerio DOM parser unit tests
+│   ├── api.test.js           # REST API integration tests
+│   ├── validator.test.js     # URL validator unit tests
+│   ├── seoScore.test.js      # SEO scoring rule unit tests
+│   └── utils.test.js         # Helper utility unit tests
+├── docs/                     # Architecture & Engineering Documentation
+│   ├── ARCHITECTURE.md       # Lifecycle & scale specifications
+│   ├── API.md                # REST API documentation
+│   ├── TESTING.md            # Testing methodology & coverage
+│   ├── DECISIONS.md          # 6 Architectural Decision Records (ADRs)
+│   ├── ROADMAP.md            # Product roadmap v1.0 -> v2.0
+│   ├── SECURITY.md           # Security posture & rate limiting
+│   └── PERFORMANCE.md        # Memory & parsing benchmarks
+├── screenshots/              # Screenshot asset documentation
+├── CHANGELOG.md              # Release history
+├── LICENSE                   # MIT License
+├── LOOM_SCRIPT.md            # 6-7 minute video walkthrough presentation script
+├── jest.config.cjs           # Jest configuration
 └── README.md
 ```
 
 ---
 
-## ⚡ API Specification
+## 🧪 Automated Testing & Coverage
+
+PulseIQ includes a Jest + Supertest test suite:
+
+```bash
+# Run test suite
+npm test
+```
+
+### Verified Coverage Report
+```
+PASS tests/utils.test.js
+PASS tests/validator.test.js
+PASS tests/seoScore.test.js
+PASS tests/parser.test.js
+PASS tests/api.test.js
+
+Test Suites: 5 passed, 5 total
+Tests:       44 passed, 44 total
+Statements:  95.7% Coverage
+Functions:   100.0% Coverage
+Lines:       95.4% Coverage
+Time:        5.268 s
+```
+
+---
+
+## 📡 REST API Documentation
 
 ### `POST /api/analyze`
 
@@ -103,53 +128,30 @@ Task A/
 }
 ```
 
-#### Response Example (200 OK)
+#### Response Example (`200 OK`)
 ```json
 {
   "success": true,
-  "url": "https://google.com/",
-  "analyzedAt": "2026-07-25T17:15:00.000Z",
+  "url": "https://www.google.com/",
+  "analyzedAt": "2026-07-25T16:36:19.208Z",
   "statusCode": 200,
   "statusText": "OK",
-  "responseTime": 142,
+  "responseTime": 161,
   "contentType": "text/html; charset=UTF-8",
   "pageTitle": "Google",
-  "metaDescription": "Search the world's information, including webpages, images, videos and more.",
-  "metaKeywords": null,
+  "metaDescription": "Search the world's information...",
   "canonicalURL": "https://www.google.com/",
-  "favicon": "https://www.google.com/favicon.ico",
-  "language": "en",
-  "charset": "UTF-8",
+  "favicon": "https://www.gstatic.com/images/branding/searchlogo/ico/favicon.ico",
   "httpsEnabled": true,
   "h1Count": 1,
-  "h2Count": 0,
-  "h3Count": 0,
-  "paragraphCount": 12,
   "wordCount": 420,
   "estimatedReadingTime": "3 min read",
-  "imageCount": 4,
-  "imagesMissingAlt": 0,
-  "internalLinks": 15,
-  "externalLinks": 3,
-  "viewportPresent": true,
-  "robotsMeta": null,
   "robotsTxtExists": true,
   "sitemapExists": true,
-  "openGraphTags": {
-    "present": true,
-    "title": "Google",
-    "description": "Search engine",
-    "image": "https://www.google.com/images/branding/googleg/1x/googleg_standard_color_128dp.png"
-  },
-  "twitterCard": {
-    "present": true
-  },
   "performanceRating": "Fast",
   "seoScore": 95,
   "warnings": [],
-  "recommendations": [
-    "Keep page titles under 60 characters for optimal display in SERPs."
-  ]
+  "recommendations": []
 }
 ```
 
@@ -162,8 +164,6 @@ Task A/
 - npm >= 9.x
 
 ### 2. Installation
-Clone the repository and install all dependencies:
-
 ```bash
 # Install root dependencies
 npm install
@@ -172,50 +172,27 @@ npm install
 npm run install:all
 ```
 
-### 3. Environment Variables Setup
-
-Create `.env` in `backend/`:
-```env
-PORT=5000
-NODE_ENV=development
-```
-
-Create `.env` in `frontend/`:
-```env
-VITE_API_URL=http://localhost:5000
-```
-
-### 4. Running Locally
-Run both backend API and Vite dev server simultaneously:
-
+### 3. Run Locally
 ```bash
+# Run both frontend and backend concurrently
 npm run dev
 ```
 
-- **Frontend**: `http://localhost:3000`
+- **Frontend UI**: `http://localhost:3000`
+- **Developer Portal**: `http://localhost:3000/developer`
 - **Backend API**: `http://localhost:5000`
 
 ---
 
-## 🚀 Production Deployment
+## 🚀 Deployment
 
-### Backend Deployment (Render)
-1. Connect your GitHub repository to Render.
-2. Select **Web Service**.
-3. Set **Root Directory**: `backend`
-4. Set **Build Command**: `npm install`
-5. Set **Start Command**: `node server.js`
-6. Add environment variable: `PORT=5000`
-
-### Frontend Deployment (Vercel)
-1. Import project into Vercel.
-2. Set **Root Directory**: `frontend`
-3. Set **Framework Preset**: Vite
-4. Add environment variable:
-   - `VITE_API_URL`: Your deployed Render backend URL (e.g. `https://pulse-iq-api.onrender.com`)
+- **Frontend & Serverless API**: Deployed to Vercel (`https://pulse-iq-frontend.vercel.app`)
+- **Standalone Backend**: Configured for deployment to Render (`render.com`)
 
 ---
 
-## 📜 Credit
+## 📄 License & Credits
+
+This project is licensed under the [MIT License](LICENSE).
 
 Built for [Digital Heroes](https://digitalheroesco.com) Training Task.

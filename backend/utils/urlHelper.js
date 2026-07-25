@@ -10,8 +10,8 @@ export const normalizeUrl = (inputUrl) => {
 
   let trimmed = inputUrl.trim();
 
-  // Add https:// protocol if omitted
-  if (!/^https?:\/\//i.test(trimmed)) {
+  // Add https:// protocol if no URI scheme is specified
+  if (!/^[a-zA-Z][a-zA-Z0-9+.-]*:\/\//i.test(trimmed)) {
     trimmed = `https://${trimmed}`;
   }
 

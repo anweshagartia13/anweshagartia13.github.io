@@ -2,8 +2,10 @@
   "name": "pulse-iq",
   "version": "1.0.0",
   "private": true,
+  "type": "module",
   "description": "PULSE IQ - Website Health & SEO Analyzer",
   "scripts": {
+    "test": "node --experimental-vm-modules ./backend/node_modules/jest/bin/jest.js --config=jest.config.cjs",
     "install:all": "npm install --prefix backend && npm install --prefix frontend",
     "dev": "concurrently \"npm run dev --prefix backend\" \"npm run dev --prefix frontend\"",
     "start:backend": "npm run start --prefix backend",
