@@ -1,3 +1,5 @@
+import { NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
 import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
 
 const isPublicRoute = createRouteMatcher([
@@ -7,18 +9,24 @@ const isPublicRoute = createRouteMatcher([
   "/api/leads(.*)",
 ]);
 
-export default clerkMiddleware(async (auth, req) => {
-  // Only protect if Clerk publishable key is configured in env
-  if (process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY && !isPublicRoute(req)) {
+const hasClerkKey = Boolean(process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY);
+
+const clerkHandler = clerkMiddleware(async (auth, req) => {
+  if (!isPublicRoute(req)) {
     await auth.protect();
   }
 });
 
+export default function middleware(req: NextRequest, event: any) {
+  if (!hasClerkKey) {
+    return NextResponse.next();
+  }
+  return clerkHandler(req, event);
+}
+
 export const config = {
   matcher: [
-    // Skip Next.js internals and all static files, unless found in search params
     "/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|json|png|jpg|jpeg|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)",
-    // Always run for API routes
     "/(api|trpc)(.*)",
   ],
 };
