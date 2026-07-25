@@ -9,18 +9,27 @@ const isPublicRoute = createRouteMatcher([
   "/api/leads(.*)",
   "/sitemap.xml",
   "/robots.txt",
-  "/manifest.json",
+  "/manifest.webmanifest",
 ]);
 
 const hasClerkKey = Boolean(process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY);
 
 const clerkHandler = clerkMiddleware(async (auth, req) => {
   if (!isPublicRoute(req)) {
-    await auth.protect();
+    // Check if custom admin_session cookie is present
+    const hasAdminSession = req.cookies.has("admin_session");
+    if (!hasAdminSession) {
+      await auth.protect();
+    }
   }
 });
 
 export default function middleware(req: NextRequest, event: any) {
+  // If custom admin_session cookie is present, allow access to admin routes
+  if (req.cookies.has("admin_session") && !isPublicRoute(req)) {
+    return NextResponse.next();
+  }
+
   if (!hasClerkKey) {
     return NextResponse.next();
   }
