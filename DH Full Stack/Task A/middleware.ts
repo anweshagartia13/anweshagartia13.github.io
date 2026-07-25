@@ -4,9 +4,12 @@ import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
 
 const isPublicRoute = createRouteMatcher([
   "/",
-  "/sign-in(.*)",
+  "/login(.*)",
   "/sign-up(.*)",
   "/api/leads(.*)",
+  "/sitemap.xml",
+  "/robots.txt",
+  "/manifest.json",
 ]);
 
 const hasClerkKey = Boolean(process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY);

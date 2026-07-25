@@ -7,7 +7,24 @@ export const BUDGET_OPTIONS = [
   "Above $5000",
 ] as const;
 
-export const STATUS_OPTIONS = ["NEW", "CONTACTED", "CLOSED"] as const;
+export const STATUS_OPTIONS = [
+  "NEW",
+  "QUALIFIED",
+  "CONTACTED",
+  "PROPOSAL_SENT",
+  "CLOSED",
+] as const;
+
+export function sanitizeInput(str: string): string {
+  if (!str) return "";
+  return str
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#x27;")
+    .replace(/\//g, "&#x2F;");
+}
 
 export const leadSchema = z.object({
   name: z

@@ -2,105 +2,121 @@ import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
-const mockLeads = [
+const SEED_LEADS = [
   {
     name: "Alexander Wright",
-    email: "alexander.w@stripe-client.io",
-    budget: "$1000-$5000",
-    message: "We need a modern lead pipeline system integrated with our custom Next.js frontend and CRM workflow.",
-    status: "NEW",
-    createdAt: new Date(Date.now() - 1000 * 60 * 60 * 2), // 2 hours ago
-  },
-  {
-    name: "Sophia Chen",
-    email: "sophia.chen@techmatrix.co",
+    email: "alexander.wright@fintechcorp.io",
     budget: "Above $5000",
-    message: "Looking for an enterprise dashboard suite with real-time lead analytics, Clerk auth, and Supabase integration.",
-    status: "CONTACTED",
-    createdAt: new Date(Date.now() - 1000 * 60 * 60 * 14), // 14 hours ago
-  },
-  {
-    name: "Marcus Vance",
-    email: "marcus@linearflow.dev",
-    budget: "$500-$1000",
-    message: "Interested in automated email alerts with Resend and instant status updates for customer queries.",
-    status: "CLOSED",
-    createdAt: new Date(Date.now() - 1000 * 60 * 60 * 36), // 1.5 days ago
+    message: "Looking for enterprise lead management and CRM integration with Stripe and custom webhooks.",
+    status: "PROPOSAL_SENT",
   },
   {
     name: "Elena Rostova",
-    email: "elena@designhub.studio",
+    email: "elena@cloudscale.app",
     budget: "$1000-$5000",
-    message: "We love your Linear aesthetic. We want a custom lead capture funnel for our high-end agency.",
-    status: "NEW",
-    createdAt: new Date(Date.now() - 1000 * 60 * 60 * 50),
+    message: "We need an automated lead intake pipeline for our SaaS landing page with instant email notifications.",
+    status: "QUALIFIED",
   },
   {
-    name: "David Miller",
-    email: "d.miller@apexcapital.org",
-    budget: "Above $5000",
-    message: "Need full stack custom software build with analytics dashboards, CSV exports, and multi-tenant security.",
+    name: "Marcus Vance",
+    email: "marcus@vancemarketing.co",
+    budget: "$500-$1000",
+    message: "Seeking a modern solution to track client inquiries and export weekly CSV reports for our sales team.",
     status: "CONTACTED",
-    createdAt: new Date(Date.now() - 1000 * 60 * 60 * 72),
+  },
+  {
+    name: "Sophia Chen",
+    email: "sophia.chen@innovateai.tech",
+    budget: "Above $5000",
+    message: "We require high-volume lead capture with Clerk authentication and custom role-based admin controls.",
+    status: "CLOSED",
+  },
+  {
+    name: "David Sterling",
+    email: "david@sterlinglegal.com",
+    budget: "$1000-$5000",
+    message: "Interested in setting up a secure lead collection form with automated confirmation emails.",
+    status: "NEW",
+  },
+  {
+    name: "Claire Underwood",
+    email: "claire@capitolmedia.org",
+    budget: "Under $500",
+    message: "Looking for a clean, minimal lead desk setup for our seasonal non-profit marketing campaign.",
+    status: "NEW",
+  },
+  {
+    name: "Liam O'Connor",
+    email: "liam@dublindigital.ie",
+    budget: "$1000-$5000",
+    message: "We need a drag-and-drop Kanban workflow to track our agency lead pipeline stages.",
+    status: "QUALIFIED",
   },
   {
     name: "Hannah Abbott",
-    email: "hannah@nexuslogistics.com",
-    budget: "Under $500",
-    message: "Looking to audit our current contact forms and switch over to LeadDesk Mini for smoother lead tracking.",
-    status: "NEW",
-    createdAt: new Date(Date.now() - 1000 * 60 * 60 * 96),
-  },
-  {
-    name: "Jameson Blake",
-    email: "jblake@pulsemedia.net",
-    budget: "$1000-$5000",
-    message: "Requesting a demo of the analytics tab and custom filtering capabilities for sales teams.",
-    status: "CLOSED",
-    createdAt: new Date(Date.now() - 1000 * 60 * 60 * 120),
-  },
-  {
-    name: "Olivia Thorne",
-    email: "olivia@biotechlabs.io",
+    email: "hannah@biotechlabs.health",
     budget: "Above $5000",
-    message: "We need HIPAA compliant lead handling with Postgres database backups and custom RBAC permissions.",
-    status: "CONTACTED",
-    createdAt: new Date(Date.now() - 1000 * 60 * 60 * 150),
+    message: "Inquiring about HIPAA compliant lead collection and custom audit logging for regulatory compliance.",
+    status: "PROPOSAL_SENT",
   },
   {
-    name: "Ethan Ramirez",
-    email: "ethan@fintechscale.app",
+    name: "Jordan Rivera",
+    email: "jordan@ecommercescale.com",
     budget: "$500-$1000",
-    message: "Seeking quick integration guide for Next.js 15 Server Actions and Zod validation.",
-    status: "NEW",
-    createdAt: new Date(Date.now() - 1000 * 60 * 60 * 180),
+    message: "Wanting to replace legacy Google Forms with a branded SaaS CRM landing page.",
+    status: "CONTACTED",
   },
   {
-    name: "Chloe Bennett",
-    email: "chloe@vercellabs.org",
-    budget: "$1000-$5000",
-    message: "We want a dark mode primary design with smooth Framer Motion interactions and custom toasts.",
+    name: "Nathaniel Black",
+    email: "nathaniel@blackwoodventures.com",
+    budget: "Above $5000",
+    message: "Ready to deploy LeadDesk Pro across 3 sales regions with customized analytics dashboards.",
     status: "CLOSED",
-    createdAt: new Date(Date.now() - 1000 * 60 * 60 * 220),
   },
 ];
 
 async function main() {
-  console.log("🌱 Seeding database with mock leads...");
-  await prisma.lead.deleteMany();
+  console.log("🌱 Starting LeadDesk Pro Database Seeding...");
 
-  for (const lead of mockLeads) {
-    await prisma.lead.create({
-      data: lead,
+  // Clear existing records
+  await prisma.lead.deleteMany();
+  await prisma.auditLog.deleteMany();
+
+  // Create Leads
+  for (const leadData of SEED_LEADS) {
+    const lead = await prisma.lead.create({
+      data: leadData,
+    });
+    console.log(`✅ Created Lead: ${lead.name} (${lead.status})`);
+
+    // Create corresponding audit log
+    await prisma.auditLog.create({
+      data: {
+        action: "LEAD_CREATED",
+        leadId: lead.id,
+        adminId: "admin_sys",
+        adminEmail: "admin@leaddesk.pro",
+        details: `Seed lead generated for ${lead.name} (${lead.email})`,
+      },
     });
   }
 
-  console.log(`✅ Database seeded successfully with ${mockLeads.length} leads!`);
+  // Create sample audit events
+  await prisma.auditLog.create({
+    data: {
+      action: "EXPORT_GENERATED",
+      adminId: "admin_sys",
+      adminEmail: "admin@leaddesk.pro",
+      details: "Initial CSV data backup report generated by system administrator",
+    },
+  });
+
+  console.log("🎉 Seeding completed successfully!");
 }
 
 main()
   .catch((e) => {
-    console.error("❌ Seeding error:", e);
+    console.error("❌ Seeding Error:", e);
     process.exit(1);
   })
   .finally(async () => {

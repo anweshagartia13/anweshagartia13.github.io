@@ -2,13 +2,22 @@
 
 import { revalidatePath } from "next/cache";
 import { prisma } from "@/lib/prisma";
-import { leadSchema, updateLeadStatusSchema, LeadFormData } from "@/lib/validations/lead";
+import { leadSchema } from "@/lib/validations/lead";
 import { sendLeadNotificationEmail } from "@/lib/email";
+import { createAuditLog } from "@/lib/audit";
 import { LeadItem, LeadStats } from "@/types/lead";
 
-export async function createLeadAction(data: LeadFormData) {
+/**
+ * Server Action: Submit a new Lead
+ */
+export async function createLeadAction(formData: {
+  name: string;
+  email: string;
+  budget: string;
+  message: string;
+}) {
   try {
-    const validatedData = leadSchema.parse(data);
+    const validatedData = leadSchema.parse(formData);
 
     const lead = await prisma.lead.create({
       data: {
@@ -20,89 +29,32 @@ export async function createLeadAction(data: LeadFormData) {
       },
     });
 
-    // Send email notification asynchronously via Resend
-    try {
-      await sendLeadNotificationEmail({
-        name: lead.name,
-        email: lead.email,
-        budget: lead.budget,
-        message: lead.message,
-        createdAt: lead.createdAt,
-      });
-    } catch (emailErr) {
-      console.error("Failed to send lead email notification:", emailErr);
-    }
-
-    revalidatePath("/admin");
-    revalidatePath("/admin/analytics");
-
-    return {
-      success: true,
-      message: "Your request has been submitted successfully!",
+    // Write Audit Log
+    await createAuditLog({
+      action: "LEAD_CREATED",
       leadId: lead.id,
-    };
+      details: `New lead created by ${lead.name} (${lead.email})`,
+    });
+
+    // Send email alert asynchronously
+    sendLeadNotificationEmail(lead).catch((err) =>
+      console.error("Server Action Email send error:", err)
+    );
+
+    revalidatePath("/admin");
+    revalidatePath("/admin/activity");
+    return { success: true, lead };
   } catch (error: any) {
-    console.error("Error creating lead:", error);
     if (error?.errors) {
-      return {
-        success: false,
-        error: error.errors[0]?.message || "Validation failed.",
-      };
+      return { success: false, error: error.errors[0]?.message || "Validation Error" };
     }
-    return {
-      success: false,
-      error: "Failed to submit lead. Please try again later.",
-    };
+    return { success: false, error: "Failed to submit lead." };
   }
 }
 
-export async function updateLeadStatusAction(id: string, newStatus: string) {
-  try {
-    const validated = updateLeadStatusSchema.parse({ id, status: newStatus });
-
-    const updatedLead = await prisma.lead.update({
-      where: { id: validated.id },
-      data: { status: validated.status },
-    });
-
-    revalidatePath("/admin");
-    revalidatePath("/admin/analytics");
-
-    return {
-      success: true,
-      lead: updatedLead,
-    };
-  } catch (error: any) {
-    console.error("Error updating lead status:", error);
-    return {
-      success: false,
-      error: "Failed to update lead status.",
-    };
-  }
-}
-
-export async function deleteLeadAction(id: string) {
-  try {
-    await prisma.lead.delete({
-      where: { id },
-    });
-
-    revalidatePath("/admin");
-    revalidatePath("/admin/analytics");
-
-    return {
-      success: true,
-      message: "Lead deleted successfully.",
-    };
-  } catch (error: any) {
-    console.error("Error deleting lead:", error);
-    return {
-      success: false,
-      error: "Failed to delete lead.",
-    };
-  }
-}
-
+/**
+ * Server Action: Get Paginated and Filtered Leads
+ */
 export async function getLeadsAction(params?: {
   search?: string;
   status?: string;
@@ -112,19 +64,22 @@ export async function getLeadsAction(params?: {
   pageSize?: number;
 }) {
   try {
-    const search = params?.search?.trim() || "";
-    const status = params?.status || "ALL";
-    const budget = params?.budget || "ALL";
-    const sortBy = params?.sortBy || "latest";
-    const page = params?.page || 1;
-    const pageSize = params?.pageSize || 10;
+    const {
+      search = "",
+      status = "ALL",
+      budget = "ALL",
+      sortBy = "latest",
+      page = 1,
+      pageSize = 10,
+    } = params || {};
 
     const where: any = {};
 
-    if (search) {
+    if (search.trim()) {
       where.OR = [
         { name: { contains: search } },
         { email: { contains: search } },
+        { message: { contains: search } },
       ];
     }
 
@@ -144,6 +99,7 @@ export async function getLeadsAction(params?: {
     }
 
     const totalLeads = await prisma.lead.count({ where });
+    const totalPages = Math.max(1, Math.ceil(totalLeads / pageSize));
 
     const leads = await prisma.lead.findMany({
       where,
@@ -152,8 +108,6 @@ export async function getLeadsAction(params?: {
       take: pageSize,
     });
 
-    const totalPages = Math.ceil(totalLeads / pageSize) || 1;
-
     return {
       success: true,
       leads: leads as LeadItem[],
@@ -161,111 +115,168 @@ export async function getLeadsAction(params?: {
       totalPages,
       currentPage: page,
     };
-  } catch (error: any) {
-    console.error("Error fetching leads:", error);
-    return {
-      success: false,
-      leads: [],
-      totalLeads: 0,
-      totalPages: 1,
-      currentPage: 1,
-      error: "Failed to load leads from database.",
-    };
+  } catch {
+    return { success: false, error: "Failed to fetch leads", leads: [], totalLeads: 0, totalPages: 1, currentPage: 1 };
   }
 }
 
-export async function getLeadStatsAction(): Promise<{
-  success: boolean;
-  stats: LeadStats;
-  statusDistribution: { status: string; count: number; color: string }[];
-  budgetDistribution: { budget: string; count: number }[];
-  monthlyData: { month: string; leads: number; closed: number }[];
-}> {
+/**
+ * Server Action: Get All Leads for Kanban Board (Unpaginated)
+ */
+export async function getAllLeadsForKanbanAction() {
   try {
-    const allLeads = await prisma.lead.findMany({
+    const leads = await prisma.lead.findMany({
       orderBy: { createdAt: "desc" },
     });
+    return { success: true, leads: leads as LeadItem[] };
+  } catch {
+    return { success: false, error: "Failed to fetch kanban leads", leads: [] };
+  }
+}
 
-    const totalLeads = allLeads.length;
-    const newLeads = allLeads.filter((l) => l.status === "NEW").length;
-    const contactedLeads = allLeads.filter((l) => l.status === "CONTACTED").length;
-    const closedLeads = allLeads.filter((l) => l.status === "CLOSED").length;
-    const conversionRate = totalLeads > 0 ? Math.round((closedLeads / totalLeads) * 100) : 0;
+/**
+ * Server Action: Update Lead Status
+ */
+export async function updateLeadStatusAction(id: string, status: string) {
+  try {
+    const existing = await prisma.lead.findUnique({ where: { id } });
+    if (!existing) return { success: false, error: "Lead not found" };
 
-    const statusDistribution = [
-      { status: "New", count: newLeads, color: "#3b82f6" },
-      { status: "Contacted", count: contactedLeads, color: "#eab308" },
-      { status: "Closed", count: closedLeads, color: "#10b981" },
-    ];
-
-    const budgetCounts: Record<string, number> = {
-      "Under $500": 0,
-      "$500-$1000": 0,
-      "$1000-$5000": 0,
-      "Above $5000": 0,
-    };
-
-    allLeads.forEach((lead) => {
-      if (budgetCounts[lead.budget] !== undefined) {
-        budgetCounts[lead.budget]++;
-      }
+    const updatedLead = await prisma.lead.update({
+      where: { id },
+      data: { status },
     });
 
-    const budgetDistribution = Object.keys(budgetCounts).map((key) => ({
-      budget: key,
-      count: budgetCounts[key],
-    }));
+    // Write Audit Log
+    await createAuditLog({
+      action: "STATUS_UPDATED",
+      leadId: id,
+      details: `Updated status of ${updatedLead.name} from "${existing.status}" to "${status}"`,
+    });
 
-    // Group by month for chart
-    const monthMap: Record<string, { leads: number; closed: number }> = {};
-    const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-    
-    // Default last 6 months
-    const now = new Date();
-    for (let i = 5; i >= 0; i--) {
-      const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
-      const label = `${months[d.getMonth()]}`;
-      monthMap[label] = { leads: 0, closed: 0 };
+    revalidatePath("/admin");
+    revalidatePath("/admin/activity");
+    return { success: true, lead: updatedLead as LeadItem };
+  } catch {
+    return { success: false, error: "Failed to update lead status" };
+  }
+}
+
+/**
+ * Server Action: Record Lead View Event
+ */
+export async function recordLeadViewAction(id: string) {
+  try {
+    const lead = await prisma.lead.findUnique({ where: { id } });
+    if (lead) {
+      await createAuditLog({
+        action: "LEAD_VIEWED",
+        leadId: id,
+        details: `Opened lead details modal for ${lead.name} (${lead.email})`,
+      });
     }
+    return { success: true };
+  } catch {
+    return { success: false };
+  }
+}
 
-    allLeads.forEach((lead) => {
-      const created = new Date(lead.createdAt);
-      const label = months[created.getMonth()];
-      if (monthMap[label]) {
-        monthMap[label].leads++;
-        if (lead.status === "CLOSED") {
-          monthMap[label].closed++;
-        }
-      }
+/**
+ * Server Action: Record CSV / Excel Export Event
+ */
+export async function recordExportAction(count: number, format: "CSV" | "EXCEL" = "CSV") {
+  try {
+    await createAuditLog({
+      action: "EXPORT_GENERATED",
+      details: `Generated ${format} report export of ${count} leads`,
+    });
+    return { success: true };
+  } catch {
+    return { success: false };
+  }
+}
+
+/**
+ * Server Action: Delete Lead
+ */
+export async function deleteLeadAction(id: string) {
+  try {
+    const lead = await prisma.lead.findUnique({ where: { id } });
+    if (!lead) return { success: false, error: "Lead not found" };
+
+    await prisma.lead.delete({ where: { id } });
+
+    // Write Audit Log
+    await createAuditLog({
+      action: "LEAD_DELETED",
+      details: `Deleted lead ${lead.name} (${lead.email})`,
     });
 
-    const monthlyData = Object.keys(monthMap).map((m) => ({
-      month: m,
-      leads: monthMap[m].leads,
-      closed: monthMap[m].closed,
-    }));
+    revalidatePath("/admin");
+    revalidatePath("/admin/activity");
+    return { success: true };
+  } catch {
+    return { success: false, error: "Failed to delete lead" };
+  }
+}
+
+/**
+ * Server Action: Get Dashboard 5-Stage Statistics & Metrics
+ */
+export async function getLeadStatsAction(): Promise<{ success: boolean; stats: LeadStats }> {
+  const fallbackStats: LeadStats = {
+    totalLeads: 0,
+    newLeads: 0,
+    qualifiedLeads: 0,
+    contactedLeads: 0,
+    proposalLeads: 0,
+    closedLeads: 0,
+    conversionRate: 0,
+    todayLeads: 0,
+    thisWeekLeads: 0,
+    avgBudget: "$1000-$5000",
+  };
+
+  try {
+    const totalLeads = await prisma.lead.count();
+    const newLeads = await prisma.lead.count({ where: { status: "NEW" } });
+    const qualifiedLeads = await prisma.lead.count({ where: { status: "QUALIFIED" } });
+    const contactedLeads = await prisma.lead.count({ where: { status: "CONTACTED" } });
+    const proposalLeads = await prisma.lead.count({ where: { status: "PROPOSAL_SENT" } });
+    const closedLeads = await prisma.lead.count({ where: { status: "CLOSED" } });
+
+    // Today's leads
+    const startOfToday = new Date();
+    startOfToday.setHours(0, 0, 0, 0);
+    const todayLeads = await prisma.lead.count({
+      where: { createdAt: { gte: startOfToday } },
+    });
+
+    // This week's leads
+    const startOfWeek = new Date();
+    startOfWeek.setDate(startOfWeek.getDate() - 7);
+    const thisWeekLeads = await prisma.lead.count({
+      where: { createdAt: { gte: startOfWeek } },
+    });
+
+    const conversionRate = totalLeads > 0 ? Math.round((closedLeads / totalLeads) * 100) : 0;
 
     return {
       success: true,
       stats: {
         totalLeads,
         newLeads,
+        qualifiedLeads,
         contactedLeads,
+        proposalLeads,
         closedLeads,
         conversionRate,
+        todayLeads,
+        thisWeekLeads,
+        avgBudget: "$2,500 - $5,000",
       },
-      statusDistribution,
-      budgetDistribution,
-      monthlyData,
     };
-  } catch (error: any) {
-    console.error("Error calculating lead stats:", error);
-    return {
-      success: false,
-      stats: { totalLeads: 0, newLeads: 0, contactedLeads: 0, closedLeads: 0, conversionRate: 0 },
-      statusDistribution: [],
-      budgetDistribution: [],
-      monthlyData: [],
-    };
+  } catch {
+    return { success: false, stats: fallbackStats };
   }
 }

@@ -74,7 +74,7 @@ export function LeadTable({
                 <th scope="col" className="py-3.5 px-4 sm:px-6">Name</th>
                 <th scope="col" className="py-3.5 px-4">Email</th>
                 <th scope="col" className="py-3.5 px-4">Budget</th>
-                <th scope="col" className="py-3.5 px-4">Status Toggle</th>
+                <th scope="col" className="py-3.5 px-4">Pipeline Stage</th>
                 <th scope="col" className="py-3.5 px-4">Created Date</th>
                 <th scope="col" className="py-3.5 px-4 text-right">Actions</th>
               </tr>
@@ -101,7 +101,7 @@ export function LeadTable({
                       </div>
                       <h4 className="text-base font-semibold text-white">No Leads Found</h4>
                       <p className="text-xs text-slate-400 leading-relaxed">
-                        No leads match your current query or filters. Try adjusting your search keyword or resetting the status dropdown.
+                        No leads match your current search query or active pipeline stage filters.
                       </p>
                     </div>
                   </td>
@@ -141,8 +141,14 @@ export function LeadTable({
                           <option value="NEW" className="bg-slate-900 text-slate-100">
                             New
                           </option>
+                          <option value="QUALIFIED" className="bg-slate-900 text-slate-100">
+                            Qualified
+                          </option>
                           <option value="CONTACTED" className="bg-slate-900 text-slate-100">
                             Contacted
+                          </option>
+                          <option value="PROPOSAL_SENT" className="bg-slate-900 text-slate-100">
+                            Proposal Sent
                           </option>
                           <option value="CLOSED" className="bg-slate-900 text-slate-100">
                             Closed

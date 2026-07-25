@@ -6,67 +6,66 @@ import { usePathname } from "next/navigation";
 import {
   LayoutDashboard,
   BarChart3,
+  Activity,
   Settings,
-  Zap,
-  ExternalLink,
-  ChevronLeft,
+  ShieldCheck,
   ChevronRight,
 } from "lucide-react";
-import { cn } from "@/lib/utils";
-
-const navigationItems = [
-  { name: "Dashboard", href: "/admin", icon: LayoutDashboard },
-  { name: "Analytics", href: "/admin/analytics", icon: BarChart3 },
-  { name: "Settings", href: "/admin/settings", icon: Settings },
-];
+import { UserButton, useUser } from "@clerk/nextjs";
 
 export function AdminSidebar() {
   const pathname = usePathname();
-  const [collapsed, setCollapsed] = React.useState(false);
+  const { user } = useUser();
+
+  const navItems = [
+    {
+      name: "Lead Pipeline",
+      href: "/admin",
+      icon: LayoutDashboard,
+    },
+    {
+      name: "Analytics & ROI",
+      href: "/admin/analytics",
+      icon: BarChart3,
+    },
+    {
+      name: "Activity & Audit Logs",
+      href: "/admin/activity",
+      icon: Activity,
+    },
+    {
+      name: "CRM Settings",
+      href: "/admin/settings",
+      icon: Settings,
+    },
+  ];
 
   return (
-    <aside
-      className={cn(
-        "relative flex flex-col h-screen border-r border-slate-800/80 bg-slate-950/90 backdrop-blur-xl transition-all duration-300 z-20 shrink-0",
-        collapsed ? "w-20" : "w-64"
-      )}
-    >
-      {/* Top Header Logo */}
-      <div className="flex items-center justify-between h-16 px-4 border-b border-slate-800/80">
-        <Link href="/" className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-indigo-600 to-violet-500 flex items-center justify-center text-white shadow-lg shadow-indigo-500/25 shrink-0">
-            <Zap className="w-5 h-5 fill-current" />
+    <aside className="w-64 bg-slate-950 border-r border-slate-800 hidden md:flex flex-col h-screen sticky top-0 z-30">
+      {/* Brand Header */}
+      <div className="p-6 border-b border-slate-800 flex items-center justify-between">
+        <Link href="/" className="flex items-center gap-2.5 group">
+          <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-indigo-600 via-indigo-500 to-cyan-400 flex items-center justify-center text-white shadow-lg shadow-indigo-500/25 group-hover:scale-105 transition-transform duration-200">
+            <ShieldCheck className="w-5 h-5" />
           </div>
-          {!collapsed && (
-            <div className="flex flex-col">
-              <span className="font-bold text-white tracking-tight text-base">LeadDesk</span>
-              <span className="text-[10px] font-semibold uppercase tracking-wider text-indigo-400">
-                Admin Console
-              </span>
-            </div>
-          )}
+          <div>
+            <span className="text-base font-extrabold text-white tracking-tight block leading-none">
+              LeadDesk <span className="text-indigo-400">Pro</span>
+            </span>
+            <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest block mt-1">
+              Enterprise CRM
+            </span>
+          </div>
         </Link>
-
-        <button
-          onClick={() => setCollapsed(!collapsed)}
-          className="p-1 rounded-lg text-slate-400 hover:bg-slate-800 hover:text-white transition-colors"
-          aria-label="Toggle Sidebar"
-        >
-          {collapsed ? <ChevronRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}
-        </button>
       </div>
 
-      {/* Main Navigation Links */}
-      <div className="flex-1 px-3 py-6 space-y-1 overflow-y-auto">
-        <div className="px-3 mb-2">
-          {!collapsed && (
-            <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500">
-              Navigation
-            </span>
-          )}
-        </div>
+      {/* Navigation Items */}
+      <div className="flex-1 py-6 px-3 space-y-1 overflow-y-auto">
+        <p className="px-3 text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-2">
+          Management Console
+        </p>
 
-        {navigationItems.map((item) => {
+        {navItems.map((item) => {
           const isActive = pathname === item.href;
           const Icon = item.icon;
 
@@ -74,41 +73,42 @@ export function AdminSidebar() {
             <Link
               key={item.name}
               href={item.href}
-              className={cn(
-                "flex items-center gap-3 px-3 py-2.5 rounded-xl font-medium text-sm transition-all duration-200 group relative",
+              className={`flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all duration-200 ${
                 isActive
-                  ? "bg-indigo-600/15 text-indigo-300 border border-indigo-500/30 shadow-sm"
-                  : "text-slate-400 hover:bg-slate-900 hover:text-slate-200"
-              )}
+                  ? "bg-indigo-600/15 text-indigo-300 border border-indigo-500/30 shadow-md shadow-indigo-950/40"
+                  : "text-slate-400 hover:text-white hover:bg-slate-900"
+              }`}
             >
-              <Icon
-                className={cn(
-                  "w-5 h-5 shrink-0 transition-colors",
-                  isActive ? "text-indigo-400" : "text-slate-400 group-hover:text-slate-200"
-                )}
-              />
-              {!collapsed && <span>{item.name}</span>}
-              {isActive && (
-                <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-5 bg-indigo-500 rounded-r-full" />
-              )}
+              <div className="flex items-center gap-3">
+                <Icon className={`w-4 h-4 ${isActive ? "text-indigo-400" : "text-slate-400"}`} />
+                <span>{item.name}</span>
+              </div>
+              {isActive && <ChevronRight className="w-3.5 h-3.5 text-indigo-400" />}
             </Link>
           );
         })}
       </div>
 
-      {/* Footer Navigation */}
-      <div className="p-3 border-t border-slate-800/80 space-y-2">
-        <Link
-          href="/"
-          target="_blank"
-          className={cn(
-            "flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-medium text-slate-400 hover:bg-slate-900 hover:text-slate-200 transition-colors",
-            collapsed && "justify-center"
-          )}
-        >
-          <ExternalLink className="w-4 h-4 shrink-0 text-slate-500" />
-          {!collapsed && <span>Public Landing Page</span>}
-        </Link>
+      {/* Bottom Profile Footer */}
+      <div className="p-4 border-t border-slate-800 bg-slate-900/60">
+        <div className="flex items-center gap-3">
+          <UserButton
+            afterSignOutUrl="/"
+            appearance={{
+              elements: {
+                avatarBox: "w-9 h-9 rounded-xl border border-indigo-500/30",
+              },
+            }}
+          />
+          <div className="overflow-hidden">
+            <p className="text-xs font-bold text-white truncate">
+              {user?.fullName || user?.primaryEmailAddress?.emailAddress || "Admin Console"}
+            </p>
+            <p className="text-[10px] text-indigo-400 font-mono font-medium truncate">
+              System Admin
+            </p>
+          </div>
+        </div>
       </div>
     </aside>
   );

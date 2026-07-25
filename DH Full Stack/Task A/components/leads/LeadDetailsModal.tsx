@@ -5,7 +5,7 @@ import { Modal } from "@/components/ui/Modal";
 import { LeadItem } from "@/types/lead";
 import { LeadStatusBadge } from "./LeadStatusBadge";
 import { formatDate } from "@/lib/utils";
-import { updateLeadStatusAction } from "@/app/actions/lead-actions";
+import { updateLeadStatusAction, recordLeadViewAction } from "@/app/actions/lead-actions";
 import { toast } from "sonner";
 import { User, Mail, DollarSign, Calendar, MessageSquare } from "lucide-react";
 
@@ -23,6 +23,12 @@ export function LeadDetailsModal({
   onStatusUpdated,
 }: LeadDetailsModalProps) {
   const [updating, setUpdating] = React.useState(false);
+
+  React.useEffect(() => {
+    if (lead && isOpen) {
+      recordLeadViewAction(lead.id).catch(() => {});
+    }
+  }, [lead, isOpen]);
 
   if (!lead) return null;
 
@@ -47,7 +53,7 @@ export function LeadDetailsModal({
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title="Lead Details"
+      title="Lead Details & CRM Profile"
       description={`Captured on ${formatDate(lead.createdAt)}`}
       maxWidth="lg"
     >
@@ -55,21 +61,23 @@ export function LeadDetailsModal({
         {/* Top Badges & Actions */}
         <div className="flex flex-wrap items-center justify-between gap-4 p-4 rounded-xl bg-slate-950/60 border border-slate-800">
           <div className="flex items-center gap-2">
-            <span className="text-xs text-slate-400 font-medium uppercase tracking-wider">Current Status:</span>
+            <span className="text-xs text-slate-400 font-medium uppercase tracking-wider">Current Pipeline Stage:</span>
             <LeadStatusBadge status={lead.status} />
           </div>
 
           <div className="flex items-center gap-2">
-            <span className="text-xs text-slate-400 font-medium">Quick Change:</span>
+            <span className="text-xs text-slate-400 font-medium">Pipeline Stage:</span>
             <select
               value={lead.status}
               disabled={updating}
               onChange={(e) => handleStatusChange(e.target.value)}
               className="bg-slate-900 border border-slate-700 text-xs font-semibold rounded-lg px-2.5 py-1.5 text-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 cursor-pointer"
             >
-              <option value="NEW">New (Blue)</option>
-              <option value="CONTACTED">Contacted (Yellow)</option>
-              <option value="CLOSED">Closed (Green)</option>
+              <option value="NEW">New</option>
+              <option value="QUALIFIED">Qualified</option>
+              <option value="CONTACTED">Contacted</option>
+              <option value="PROPOSAL_SENT">Proposal Sent</option>
+              <option value="CLOSED">Closed</option>
             </select>
           </div>
         </div>
@@ -108,7 +116,7 @@ export function LeadDetailsModal({
           <div className="p-3.5 rounded-xl bg-slate-950/40 border border-slate-800/80 flex items-start gap-3">
             <Calendar className="w-5 h-5 text-slate-400 mt-0.5 shrink-0" />
             <div>
-              <p className="text-xs text-slate-400 font-semibold uppercase">Created Date</p>
+              <p className="text-xs text-slate-400 font-semibold uppercase">Captured Date</p>
               <p className="text-sm font-medium text-slate-300 mt-0.5">{formatDate(lead.createdAt)}</p>
             </div>
           </div>

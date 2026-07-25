@@ -7,30 +7,41 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-enum LeadStatus {
-  NEW
-  CONTACTED
-  CLOSED
-}
-
-enum BudgetRange {
-  UNDER_500
-  BETWEEN_500_1000
-  BETWEEN_1000_5000
-  ABOVE_5000
-}
-
 model Lead {
-  id        String      @id @default(cuid())
+  id        String   @id @default(cuid())
   name      String
   email     String
   budget    String
   message   String
-  status    String      @default("NEW")
-  createdAt DateTime    @default(now())
-  updatedAt DateTime    @updatedAt
+  status    String   @default("NEW") // NEW, QUALIFIED, CONTACTED, PROPOSAL_SENT, CLOSED
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@index([email])
   @@index([status])
   @@index([createdAt])
+}
+
+model AuditLog {
+  id         String   @id @default(cuid())
+  adminId    String   @default("admin_sys")
+  adminEmail String?  @default("admin@leaddesk.pro")
+  leadId     String?
+  action     String   // LEAD_CREATED, STATUS_UPDATED, LEAD_VIEWED, LEAD_DELETED, EXPORT_GENERATED
+  details    String?
+  timestamp  DateTime @default(now())
+
+  @@index([adminId])
+  @@index([action])
+  @@index([timestamp])
+}
+
+model AdminProfile {
+  id          String   @id @default(cuid())
+  clerkUserId String   @unique
+  email       String
+  name        String?
+  role        String   @default("ADMIN")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }
