@@ -8,9 +8,9 @@ Designed with a sleek, dark/light mode SaaS design system inspired by **Linear**
 
 ## 🚀 Live Links & Deliverables
 
-- **Live Landing Page**: [https://leaddesk-mini.vercel.app](https://leaddesk-mini.vercel.app)
-- **Admin Dashboard**: [https://leaddesk-mini.vercel.app/admin](https://leaddesk-mini.vercel.app/admin)
-- **GitHub Repository**: [https://github.com/anweshagartia13/leaddesk-mini](https://github.com/anweshagartia13/leaddesk-mini)
+- **Live Landing Page**: [https://leaddesk-mini-swart.vercel.app](https://leaddesk-mini-swart.vercel.app)
+- **Admin Dashboard**: [https://leaddesk-mini-swart.vercel.app/admin](https://leaddesk-mini-swart.vercel.app/admin)
+- **GitHub Repository**: [https://github.com/anweshagartia13/anweshagartia13.github.io/tree/main/DH%20Full%20Stack/Task%20A](https://github.com/anweshagartia13/anweshagartia13.github.io/tree/main/DH%20Full%20Stack/Task%20A)
 
 ---
 
@@ -61,59 +61,13 @@ Designed with a sleek, dark/light mode SaaS design system inspired by **Linear**
 
 ---
 
-## 📁 Project Structure
-
-```text
-leaddesk-mini/
-├── app/
-│   ├── layout.tsx                # Root layout with ClerkProvider, ThemeProvider, Toaster
-│   ├── page.tsx                  # Public Landing Page & Lead Form
-│   ├── not-found.tsx             # Custom SaaS 404 page
-│   ├── error.tsx                 # Custom Error Boundary
-│   ├── actions/
-│   │   └── lead-actions.ts       # Server Actions (create, update status, delete, get stats)
-│   ├── admin/
-│   │   ├── layout.tsx            # Protected Admin layout with Sidebar & Header
-│   │   ├── page.tsx              # Admin Dashboard with Leads Table & Filters
-│   │   ├── analytics/
-│   │   │   └── page.tsx          # Recharts Analytics Dashboard
-│   │   └── settings/
-│   │       └── page.tsx          # CRM configuration & alert settings
-│   └── api/
-│       └── leads/
-│           ├── route.ts          # GET / POST leads REST API
-│           └── [id]/
-│               └── route.ts      # GET / PATCH / DELETE lead REST API
-├── components/
-│   ├── landing/                  # Navbar, Hero, Features, Pricing, Testimonials, FAQ, Footer
-│   ├── leads/                    # LeadForm, LeadTable, LeadStatusBadge, LeadDetailsModal, LeadDeleteModal, LeadFilters
-│   ├── analytics/                # MonthlyLeadsChart, StatusPieChart, BudgetBarChart
-│   ├── layout/                   # AdminSidebar, AdminHeader
-│   └── ui/                       # Button, Input, Textarea, Badge, Modal, Skeleton, ThemeToggle
-├── lib/
-│   ├── prisma.ts                 # Prisma Client Singleton
-│   ├── email.ts                  # Resend email notification helper
-│   ├── export.ts                 # CSV file downloader utility
-│   ├── utils.ts                  # Date formatting & Tailwind merge helper
-│   └── validations/
-│       └── lead.ts               # Shared Zod validation schemas
-├── prisma/
-│   ├── schema.prisma             # Lead database model definition
-│   └── seed.ts                   # Database seeder (10 realistic leads)
-├── public/                       # Assets & Favicon
-├── .env.example                  # Environment variable reference
-└── README.md
-```
-
----
-
 ## ⚡ Quick Start & Installation
 
 ### 1. Clone & Install Dependencies
 
 ```bash
-git clone https://github.com/anweshagartia13/leaddesk-mini.git
-cd leaddesk-mini
+git clone https://github.com/anweshagartia13/anweshagartia13.github.io.git
+cd "anweshagartia13.github.io/DH Full Stack/Task A"
 npm install
 ```
 
@@ -125,7 +79,7 @@ Create a `.env` file in the root directory:
 # Database Connection (SQLite local dev or Supabase PostgreSQL)
 DATABASE_URL="file:./dev.db"
 
-# Clerk Authentication Keys (Optional for local demo mode, required for production auth)
+# Clerk Authentication Keys
 NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY="pk_test_..."
 CLERK_SECRET_KEY="sk_test_..."
 
@@ -143,10 +97,7 @@ NOTIFICATION_EMAIL="admin@leaddesk.com"
 ### 3. Initialize & Seed Database
 
 ```bash
-# Push Prisma schema to database
 npm run db:push
-
-# Seed database with sample leads
 npm run db:seed
 ```
 
@@ -157,40 +108,6 @@ npm run dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) in your browser.
-
----
-
-## 🗄️ Supabase Setup Instructions
-
-1. Create a new project at [Supabase.com](https://supabase.com).
-2. Navigate to **Project Settings** -> **Database**.
-3. Copy your connection URI (`postgresql://postgres.[ref]:[password]@aws-0-[region].pooler.supabase.com:6543/postgres?pgbouncer=true`).
-4. Replace `DATABASE_URL` in your `.env` file or Vercel Environment Variables.
-5. In `prisma/schema.prisma`, update the datasource provider to `postgresql`:
-   ```prisma
-   datasource db {
-     provider = "postgresql"
-     url      = env("DATABASE_URL")
-   }
-   ```
-6. Run `npm run db:push` to sync tables.
-
----
-
-## 🔐 Clerk Authentication Setup
-
-1. Create an application at [Clerk.com](https://clerk.com).
-2. Copy `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` and `CLERK_SECRET_KEY` into your `.env` file.
-3. In Clerk Dashboard -> **Paths**, set Sign-in to `/sign-in` and Sign-up to `/sign-up`.
-
----
-
-## 🌐 Deploying to Vercel
-
-1. Push code to your GitHub repository.
-2. Import project into [Vercel](https://vercel.com).
-3. Add environment variables (`DATABASE_URL`, `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY`, `CLERK_SECRET_KEY`, `RESEND_API_KEY`).
-4. Click **Deploy**. Vercel will run `prisma generate && next build` automatically!
 
 ---
 
