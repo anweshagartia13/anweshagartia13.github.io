@@ -4,10 +4,16 @@ import * as React from "react";
 import Link from "next/link";
 import { SignIn } from "@clerk/nextjs";
 import { AdminLoginForm } from "@/components/auth/AdminLoginForm";
-import { ShieldCheck, UserCheck, KeyRound } from "lucide-react";
+import { ShieldCheck, UserCheck, KeyRound, Info, Sparkles } from "lucide-react";
+import { toast } from "sonner";
 
 export default function LoginPage() {
   const [activeTab, setActiveTab] = React.useState<"credentials" | "clerk">("credentials");
+
+  const copyClerkCreds = () => {
+    navigator.clipboard.writeText("admin@leaddesk.pro");
+    toast.success("Copied Clerk Email: admin@leaddesk.pro to clipboard!");
+  };
 
   return (
     <div className="min-h-screen bg-slate-950 flex flex-col items-center justify-center p-4 relative overflow-hidden">
@@ -63,25 +69,48 @@ export default function LoginPage() {
         {activeTab === "credentials" ? (
           <AdminLoginForm />
         ) : (
-          <div className="flex justify-center pt-2">
-            <SignIn
-              appearance={{
-                elements: {
-                  card: "bg-transparent shadow-none border-none",
-                  headerTitle: "text-white font-bold",
-                  headerSubtitle: "text-slate-400 text-xs",
-                  socialButtonsBlockButton: "bg-slate-950 border border-slate-800 text-slate-200 hover:bg-slate-800",
-                  formFieldLabel: "text-slate-300 text-xs font-semibold uppercase tracking-wider",
-                  formFieldInput: "bg-slate-950 border border-slate-800 text-slate-100 rounded-xl focus:border-indigo-500",
-                  formButtonPrimary: "bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl font-bold shadow-lg shadow-indigo-600/25",
-                  footerActionLink: "text-indigo-400 hover:underline",
-                },
-              }}
-              routing="path"
-              path="/login"
-              signUpUrl="/sign-up"
-              fallbackRedirectUrl="/admin"
-            />
+          <div className="space-y-4 pt-1">
+            {/* Clerk Demo Credentials Information Banner */}
+            <div className="p-3.5 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 text-indigo-300 flex items-center justify-between gap-3">
+              <div className="flex items-center gap-2">
+                <Info className="w-4 h-4 text-indigo-400 shrink-0" />
+                <div className="text-xs">
+                  <span className="font-semibold text-white block">Clerk Demo Account</span>
+                  <span className="text-indigo-400/90 font-mono text-[11px]">
+                    admin@leaddesk.pro / DemoPassword123!
+                  </span>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={copyClerkCreds}
+                className="px-2.5 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white text-[11px] font-bold shrink-0 transition-colors inline-flex items-center gap-1 shadow-md shadow-indigo-600/30"
+              >
+                <Sparkles className="w-3 h-3" />
+                <span>Copy Email</span>
+              </button>
+            </div>
+
+            <div className="flex justify-center">
+              <SignIn
+                appearance={{
+                  elements: {
+                    card: "bg-transparent shadow-none border-none w-full",
+                    headerTitle: "text-white font-bold text-center",
+                    headerSubtitle: "text-slate-400 text-xs text-center",
+                    socialButtonsBlockButton: "bg-slate-950 border border-slate-800 text-slate-200 hover:bg-slate-800",
+                    formFieldLabel: "text-slate-300 text-xs font-semibold uppercase tracking-wider",
+                    formFieldInput: "bg-slate-950 border border-slate-800 text-slate-100 rounded-xl focus:border-indigo-500",
+                    formButtonPrimary: "bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl font-bold shadow-lg shadow-indigo-600/25",
+                    footerActionLink: "text-indigo-400 hover:underline",
+                  },
+                }}
+                routing="path"
+                path="/login"
+                signUpUrl="/sign-up"
+                fallbackRedirectUrl="/admin"
+              />
+            </div>
           </div>
         )}
       </div>
